@@ -1,0 +1,102 @@
+---
+layout: default
+title: Typography Specimen
+---
+
+h1.rule-above Typography & Vertical Rhythm
+
+p.lead
+  | This page demonstrates true baseline alignment using the CSS
+  code> cap
+  |  unit. Toggle the grid to see baselines land on the lines.
+
+hr
+
+h2.rule-above Two-Column Baseline Alignment
+
+.columns
+  .column
+    h3 Header
+    p.lead.italic-block
+      | The purpose of this book is to show connections between typography and architecture.
+    p
+      | Today we are witnessing the birth of a new and splendid architecture, which will set its stamp on our period.
+
+  .column
+    h4 Header two
+    p
+      | Anyone who has recognized the deep underlying similarity between typography and architecture and has understood the true nature of new architecture can no longer doubt that the future will belong to the new typography and not the old.
+
+hr
+
+h2.rule-above Heading Hierarchy
+
+p
+  | Each heading spans a specific number of baseline units. H1 spans 4 units (32px line-height), H2 spans 3 units (24px), and so on. The baselines align regardless of font size.
+
+h1 Heading Level 1
+p First paragraph after H1. Notice the baseline aligns with the grid.
+
+h2 Heading Level 2
+p First paragraph after H2. The rhythm continues unbroken.
+
+h3 Heading Level 3
+p First paragraph after H3. All text shares the same baseline positions.
+
+h4 Heading Level 4
+p First paragraph after H4. Smaller headings still align.
+
+hr
+
+h2.rule-above Body Text & Rhythm
+
+p
+  | Good typography is measured not by how much it stands out, but by how seamlessly it serves its purpose. The baseline grid provides the invisible scaffolding upon which all typographic decisions rest. When text aligns to a consistent vertical rhythm, the page achieves a harmony that readers feel even if they cannot articulate it.
+
+p
+  | As Massimo Vignelli wrote in his Canon: "The grid is an integral part of book design. It's not something that you see, it's something that you feel." This principle extends beyond print to every medium where text must communicate with clarity and grace.
+
+blockquote
+  p Typography is what language looks like.
+  p — Ellen Lupton
+
+h3 Lists
+
+ul
+  li First item in the list
+  li Second item with more text that might wrap to a second line
+  li Third item
+  li Fourth item
+
+ol
+  li Ordered first
+  li Ordered second
+  li Ordered third
+
+h3 Code
+
+pre
+  code
+    | function alignToBaseline(element) {
+    |   const baseline = 24;
+    |   const height = element.offsetHeight;
+    |   const lines = Math.ceil(height / baseline);
+    |   return lines * baseline;
+    | }
+
+hr
+
+h2.rule-above The Formula
+
+p
+  | The core calculation that makes this work:
+
+pre
+  code
+    | padding-top: calc((line-height - 1cap) / 2);
+    | margin-bottom: calc(desired-margin - padding-top);
+
+p
+  | The
+  code> 1cap
+  |  unit gives us the cap-height of the current font. Subtracting it from line-height and dividing by 2 tells us how much "half-leading" exists above the text. Adding this as padding pushes the text down so its baseline lands on the grid line.

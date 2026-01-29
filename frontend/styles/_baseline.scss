@@ -1,0 +1,338 @@
+// =============================================================================
+// Baseline Grid System
+// =============================================================================
+//
+// Implements true baseline alignment using the CSS `cap` unit.
+// Inspired by Vignelli's Canon: all vertical measurements derive from one unit.
+//
+// The core insight: CSS line-height centers text vertically, but we want
+// baselines to sit ON grid lines. The formula:
+//
+//   offset = (line-height - cap-height) / 2
+//
+// Adding this as padding-top pushes text down so baselines land on the grid.
+// Subtracting from margin-bottom maintains total rhythm.
+//
+// =============================================================================
+
+@use "sass:math";
+
+// =============================================================================
+// Configuration
+// =============================================================================
+
+// The fundamental rhythm unit. All vertical spacing derives from this.
+// 8px allows half-steps; body text line-height = 3 units = 24px
+$baseline-unit: 0.5rem !default;  // 8px at 16px root
+
+// How many baseline units for body text line-height
+$body-line-units: 3 !default;  // 24px
+
+// Derived values
+$baseline: $baseline-unit * $body-line-units;  // 24px - one "line"
+
+// =============================================================================
+// CSS Custom Properties
+// =============================================================================
+
+:root {
+  // Core rhythm
+  --baseline-unit: #{$baseline-unit};
+  --baseline: #{$baseline};
+
+  // Grid overlay
+  --grid-color: hsla(4, 90%, 58%, 0.25);
+  --grid-accent-color: hsla(4, 90%, 58%, 0.5);
+}
+
+// =============================================================================
+// Baseline Alignment Mixin
+// =============================================================================
+//
+// This is the core magic. It calculates the padding-top needed to push
+// text down so its baseline sits on a grid line.
+//
+// @param $lines - How many baseline units this element's line-height spans
+// @param $below - How many baseline units of margin below (default: 1 line)
+// @param $above - How many baseline units of margin above (default: 0)
+//
+// Example: A heading that spans 2 lines with 1 line below:
+//   @include baseline-text(2, $below: 1);
+//
+
+// Baseline text alignment mixin (Capsize-style approach)
+//
+// Uses ::before pseudo-element with negative margin to shift text down
+// without affecting margin collapse. This is the approach Capsize uses.
+//
+// @param $line-spans - How many body line-heights this element spans
+// @param $below - Margin below in body line-heights
+// @param $above - Margin above in body line-heights
+//
+// =============================================================================
+// Baseline Text Mixin
+// =============================================================================
+//
+// APPROACH: Clean 24px rhythm with JS-calculated grid offset
+//
+// Strategy: ensure all vertical spacing is exactly 24px (or multiples), then
+// have JavaScript calculate where baselines actually land and offset the
+// grid overlay to match.
+//
+// This gives perfect RELATIVE alignment (all baselines 24px apart for same-size
+// text) while the grid overlay automatically adjusts to match reality.
+//
+@mixin baseline-text($line-spans: 1, $below: 1, $above: 0) {
+  $line-height: $baseline * $line-spans;
+
+  line-height: $line-height;
+
+  // Expose baseline shift for JS calculations
+  --baseline-shift: calc((#{$line-height} - 1cap) / 2);
+
+  // Use display:flow-root to prevent margin collapse without adding any
+  // visual space. This creates a new Block Formatting Context.
+  display: flow-root;
+
+  // Clean margins - exact grid multiples
+  margin-top: #{$baseline * $above};
+  margin-bottom: #{$baseline * $below};
+}
+
+// Simplified version for elements that just need rhythm (not text alignment)
+@mixin baseline-spacing($below: 1, $above: 0) {
+  margin-top: $baseline * $above;
+  margin-bottom: $baseline * $below;
+}
+
+// =============================================================================
+// Baseline Grid Overlay
+// =============================================================================
+//
+// Shows the baseline grid for debugging. The grid shows lines where
+// text baselines should land (every `--baseline` interval).
+//
+// Toggle with: document.documentElement.classList.toggle('show-baseline')
+
+// The grid overlay is placed on <main> so it inherits the content's
+// coordinate system. This ensures the grid aligns with where text actually starts.
+.baseline-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+
+  // Show lines at each baseline interval (24px)
+  // The line represents where text baselines should sit
+  background-image:
+    // Main baseline (every 24px) - darker
+    repeating-linear-gradient(
+      to bottom,
+      var(--grid-accent-color) 0,
+      var(--grid-accent-color) 1px,
+      transparent 1px,
+      transparent var(--baseline)
+    );
+  background-size: 100% var(--baseline);
+  // Offset by --grid-offset which should be set based on where first baseline lands
+  background-position: 0 var(--grid-offset, 0);
+}
+
+// Detailed mode: show all baseline units (8px intervals)
+.baseline-overlay--detailed {
+  background-image:
+    // Sub-grid (every 8px) - lighter
+    repeating-linear-gradient(
+      to bottom,
+      var(--grid-color) 0,
+      var(--grid-color) 1px,
+      transparent 1px,
+      transparent var(--baseline-unit)
+    ),
+    // Main baseline (every 24px) - darker
+    repeating-linear-gradient(
+      to bottom,
+      var(--grid-accent-color) 0,
+      var(--grid-accent-color) 1px,
+      transparent 1px,
+      transparent var(--baseline)
+    );
+  background-size: 100% var(--baseline-unit), 100% var(--baseline);
+}
+
+.show-baseline .baseline-overlay {
+  display: block;
+}
+
+// =============================================================================
+// Typography Scale
+// =============================================================================
+//
+// Vignelli Canon approach:
+// - H1: 3 lines tall (cap-height spans ~2 lines visually)
+// - H2: 2 lines tall
+// - H3-H6: 1 line tall
+// - Body: 1 line tall
+//
+// All baseline-align with adjacent text regardless of size.
+
+@mixin baseline-typography {
+  html {
+    font-size: 100%;  // 16px default, respects user preference
+    line-height: $baseline;
+  }
+
+  body {
+    @include baseline-text(1, $below: 0, $above: 0);
+  }
+
+  // ==========================================================================
+  // Headings
+  // ==========================================================================
+  // Each heading spans a specific number of BODY LINES (24px each).
+  // Font-size is optical; line-height determines grid alignment.
+  // All headings baseline-align with adjacent body text.
+
+  h1, .h1 {
+    font-size: 2.5rem;   // 40px optical
+    @include baseline-text(2, $below: 1, $above: 0);  // 48px line-height, spans 2 lines
+  }
+
+  h2, .h2 {
+    font-size: 1.75rem;  // 28px optical
+    @include baseline-text(2, $below: 1, $above: 1);  // 48px line-height
+  }
+
+  h3, .h3 {
+    font-size: 1.25rem;  // 20px optical
+    @include baseline-text(1, $below: 1, $above: 1);  // 24px line-height
+  }
+
+  h4, .h4 {
+    font-size: 1rem;     // 16px optical (same as body, but bold)
+    @include baseline-text(1, $below: 0, $above: 1);
+  }
+
+  h5, .h5 {
+    font-size: 0.875rem;
+    font-weight: 700;
+    @include baseline-text(1, $below: 0, $above: 1);
+  }
+
+  h6, .h6 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    @include baseline-text(1, $below: 0, $above: 1);
+  }
+
+  // ==========================================================================
+  // Body Elements
+  // ==========================================================================
+
+  p {
+    @include baseline-text(1, $below: 1);
+  }
+
+  // Lists
+  ul, ol {
+    @include baseline-spacing($below: 1);
+    padding-left: $baseline;
+  }
+
+  li {
+    @include baseline-text(1, $below: 0);
+  }
+
+  // Blockquotes
+  blockquote {
+    margin-left: $baseline;
+    margin-right: 0;
+    padding-left: $baseline;
+    border-left: 4px solid currentColor;
+    font-style: italic;
+    @include baseline-spacing($below: 1, $above: 1);
+
+    p {
+      @include baseline-text(1, $below: 1);
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  // Code blocks
+  pre {
+    font-size: 0.875rem;
+    @include baseline-text(1, $below: 1, $above: 1);
+    padding: $baseline;
+    overflow-x: auto;
+    background: #f5f5f5;
+    border-radius: 2px;
+  }
+
+  code {
+    font-size: 0.875em;
+  }
+
+  // Horizontal rules
+  hr {
+    border: none;
+    border-top: 1px solid currentColor;
+    opacity: 0.2;
+    margin: calc(#{$baseline} - 1px) 0 #{$baseline};
+  }
+
+  // Small text
+  small, .small {
+    font-size: 0.875rem;
+    @include baseline-text(1, $below: 1);
+  }
+
+  // Lead/intro text - same line-height as body, just larger
+  .lead {
+    font-size: 1.125rem;
+    @include baseline-text(1, $below: 1);
+  }
+}
+
+// =============================================================================
+// Utility Classes
+// =============================================================================
+
+// Spacing utilities - multiples of the baseline (24px)
+@for $i from 0 through 6 {
+  .mt-#{$i} { margin-top: $baseline * $i; }
+  .mb-#{$i} { margin-bottom: $baseline * $i; }
+  .pt-#{$i} { padding-top: $baseline * $i; }
+  .pb-#{$i} { padding-bottom: $baseline * $i; }
+}
+
+// =============================================================================
+// Content Helpers
+// =============================================================================
+
+// Remove top margin from first child, bottom from last
+.content {
+  > *:first-child {
+    margin-top: 0;
+  }
+  > *:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Two-column layout with baseline alignment
+.columns {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $baseline * 2;
+  align-items: baseline;  // This is the key for cross-column alignment
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}

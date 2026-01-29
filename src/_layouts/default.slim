@@ -5,7 +5,14 @@ html lang=site.locale
   body class="#{data.layout} #{data.page_class}"
     == render Shared::Navbar.new(metadata: site.metadata, resource: resource)
 
-    main
+    main.content
       == yield
 
     == render "footer", metadata: site.metadata
+
+    / Baseline grid overlay (development tool)
+    .baseline-overlay
+
+    / Baseline grid toggle
+    button.baseline-toggle type="button" title="Toggle baseline grid (Ctrl+G)"
+      | Grid

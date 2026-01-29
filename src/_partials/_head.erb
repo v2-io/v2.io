@@ -5,6 +5,13 @@
 
 <meta name="description" content="<%= metadata.description %>" />
 
+<%# Apply baseline grid state immediately to prevent flash %>
+<script>
+  if (localStorage.getItem('showBaseline') === 'true') {
+    document.documentElement.classList.add('show-baseline');
+  }
+</script>
+
 <link rel="stylesheet" href="<%= asset_path :css %>" />
 <script src="<%= asset_path :js %>" defer></script>
 <%= live_reload_dev_js %>
