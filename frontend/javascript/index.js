@@ -116,39 +116,26 @@ function initBaselineAlignment() {
         correction = (targetLine * GRID_UNIT) - hrRelative
       }
     } else if (el.classList.contains('rule-above')) {
-      // For rule-above elements, we need BOTH border AND baseline on grid
-      // 1. First calculate baseline correction (like normal elements)
+      // For rule-above elements, use same logic as first element:
+      // Make border-to-baseline distance a multiple of 24, THEN align baseline
       const baseline = getBaselinePosition(el)
-      const baselineRel = baseline - gridOrigin
-      const baselineTarget = Math.round(baselineRel / GRID_UNIT)
-      correction = (baselineTarget * GRID_UNIT) - baselineRel
-
-      // 2. After baseline correction, figure out where border lands
       const borderTop = el.getBoundingClientRect().top + window.scrollY
-      const correctedBorder = borderTop + correction
-      const borderRel = correctedBorder - gridOrigin
-      const borderOffset = borderRel % GRID_UNIT
+      const borderToBaseline = baseline - borderTop
 
-      // 3. Adjust padding to shift border onto nearest grid line
-      // If border is 10px past a grid line, reduce padding by 10px
-      // If border is 14px past (closer to next line), increase padding by 10px
+      // Adjust padding so border-to-baseline is a multiple of 24
       const currentPadding = parseFloat(getComputedStyle(el).paddingTop) || 0
-      let paddingAdjust = 0
-      if (borderOffset > GRID_UNIT / 2) {
-        // Closer to next grid line - increase padding
-        paddingAdjust = GRID_UNIT - borderOffset
-      } else {
-        // Closer to previous grid line - decrease padding
-        paddingAdjust = -borderOffset
-      }
+      const targetDistance = Math.round(borderToBaseline / GRID_UNIT) * GRID_UNIT
+      const paddingAdjust = targetDistance - borderToBaseline
 
       if (Math.abs(paddingAdjust) > 0.5) {
         el.style.paddingTop = `${currentPadding + paddingAdjust}px`
-        // Re-measure baseline after padding change and recalculate correction
-        const newBaseline = getBaselinePosition(el)
-        const newBaselineRel = newBaseline - gridOrigin
-        correction = (baselineTarget * GRID_UNIT) - newBaselineRel
       }
+
+      // Now calculate transform to align baseline to grid
+      const newBaseline = getBaselinePosition(el)
+      const baselineRel = newBaseline - gridOrigin
+      const targetLine = Math.round(baselineRel / GRID_UNIT)
+      correction = (targetLine * GRID_UNIT) - baselineRel
     } else {
       const baseline = getBaselinePosition(el)
       const relativePos = baseline - gridOrigin
@@ -164,7 +151,6 @@ function initBaselineAlignment() {
     }
   })
 
-  console.log('Baseline alignment applied')
 }
 
 // =============================================================================
