@@ -1,0 +1,24 @@
+meta charset="utf-8"
+meta name="viewport" content="width=device-width, initial-scale=1.0"
+- resource_title = strip_html(strip_newlines(title))
+- if resource_title != "Index"
+  title #{resource_title} | #{metadata.title}
+- else
+  title #{metadata.title}: #{metadata.tagline}
+
+meta name="description" content=metadata.description
+
+/ Apply baseline grid state immediately to prevent flash
+javascript:
+  if (localStorage.getItem('showBaseline') === 'true') {
+    document.documentElement.classList.add('show-baseline');
+  }
+
+/ Google Fonts: Inter (sans) + Lora (serif)
+link rel="preconnect" href="https://fonts.googleapis.com"
+link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=true
+link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lora:ital,wght@0,400..700;1,400..700&display=swap"
+
+link rel="stylesheet" href=asset_path(:css)
+script src=asset_path(:js) defer=true
+==live_reload_dev_js

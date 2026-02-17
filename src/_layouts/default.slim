@@ -3,16 +3,15 @@ html lang=site.locale
   head
     == render "head", metadata: site.metadata, title: data.title
   body class="#{data.layout} #{data.page_class}"
-    == render Shared::Navbar.new(metadata: site.metadata, resource: resource)
+    .page-wrapper
+      == render Shared::SiteHeader.new(metadata: site.metadata, resource: resource)
 
-    main.content
-      == yield
+      main.content
+        == yield
 
-    == render "footer", metadata: site.metadata
+      == render "footer", metadata: site.metadata
 
-    / Baseline grid overlay (development tool)
-    .baseline-overlay
-
-    / Baseline grid toggle
-    button.baseline-toggle type="button" title="Toggle baseline grid (Ctrl+G)"
-      | Grid
+    - if Bridgetown.env.development?
+      / Baseline grid overlay (development tool)
+      .baseline-overlay
+      button.baseline-toggle type="button" title="Toggle baseline grid (Ctrl+G)" Grid
