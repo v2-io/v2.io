@@ -37,6 +37,9 @@ gem "puma", "< 8"
 # Slim templates (local plugin, since official is deprecated for BT 2.x)
 gem "slim", "~> 5.0"
 
+# Build-time LaTeX math rendering via Kramdown
+gem "kramdown-math-katex"
+
 # Uncomment to use the Inspectors API to manipulate the output
 # of your HTML or XML resources:
 # gem "nokogiri", "~> 1.18"

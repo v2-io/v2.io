@@ -40,10 +40,20 @@ document.addEventListener('DOMContentLoaded', () => {
 // =============================================================================
 // Baseline Alignment System
 // =============================================================================
-// Since CSS can't access font metrics at compile time, we use JavaScript to
-// measure actual baseline positions and apply corrections at runtime.
 //
-// This ensures perfect baseline alignment regardless of font variations.
+// Two-phase approach to baseline grid alignment:
+//
+// Phase 1 — NORMALIZE: Walk block containers (ul, ol, blockquote, pre,
+// .katex-display) and adjust their padding-bottom so each element's total
+// vertical contribution (margin + height + margin) is a multiple of 24px.
+// This is a layout change that propagates downward, preventing fractional
+// drift from accumulating across the page.
+//
+// Phase 2 — ALIGN: Walk text elements and apply translateY corrections to
+// snap baselines to grid lines. Because Phase 1 eliminated drift sources,
+// all elements of the same type land at the same fractional grid position
+// and receive the same correction — producing consistent visual spacing.
+//
 
 function getBaselinePosition(element) {
   const probe = document.createElement('span')
@@ -62,22 +72,51 @@ function getBaselinePosition(element) {
 function initBaselineAlignment() {
   const GRID_UNIT = 24
 
+  // =========================================================================
+  // Phase 1: Normalize block containers
+  // =========================================================================
+  // Block containers (lists, blockquotes, code blocks, display math) can
+  // have content heights that aren't multiples of 24px — inline KaTeX with
+  // font-size:1.21em, sub-pixel rounding, wrapped lines with fractional
+  // heights, etc. Each introduces a small drift that shifts ALL subsequent
+  // content to a different fractional grid position.
+  //
+  // Fix: measure each container's total vertical contribution and pad it
+  // to the next grid multiple. This is imperceptible (<24px of extra
+  // padding-bottom) but ensures subsequent content stays grid-aligned.
+
+  const blocks = document.querySelectorAll(
+    'main ul, main ol, main blockquote, main pre, main .katex-display'
+  )
+  blocks.forEach(el => {
+    const style = getComputedStyle(el)
+    const marginTop = parseFloat(style.marginTop)
+    const marginBottom = parseFloat(style.marginBottom)
+    const height = el.getBoundingClientRect().height
+    const total = marginTop + height + marginBottom
+    const remainder = total % GRID_UNIT
+
+    if (remainder > 0.5 && remainder < GRID_UNIT - 0.5) {
+      const currentPadding = parseFloat(style.paddingBottom) || 0
+      const adjustment = GRID_UNIT - remainder
+      el.style.paddingBottom = `${currentPadding + adjustment}px`
+    }
+  })
+
+  // =========================================================================
+  // Phase 2: Align text baselines to grid
+  // =========================================================================
+
   // Find first text element
   const firstText = document.querySelector('main h1, main h2, main h3, main p')
   if (!firstText) return
 
   // If first element has rule-above, adjust its padding first so border aligns
-  // We'll calculate grid origin from its baseline AFTER this adjustment
   if (firstText.classList.contains('rule-above')) {
-    // We need to pick a grid origin first to know where to put the border
-    // Use the baseline as origin, then adjust padding so border is at a grid multiple above
     const tempBaseline = getBaselinePosition(firstText)
     const borderTop = firstText.getBoundingClientRect().top + window.scrollY
-    const borderToBaseline = tempBaseline - borderTop // distance from border to baseline
+    const borderToBaseline = tempBaseline - borderTop
 
-    // We want border at (baseline - N*24) for some integer N
-    // Currently border is at (baseline - borderToBaseline)
-    // So we need borderToBaseline to be a multiple of 24
     const currentPadding = parseFloat(getComputedStyle(firstText).paddingTop) || 0
     const targetDistance = Math.round(borderToBaseline / GRID_UNIT) * GRID_UNIT
     const paddingAdjust = targetDistance - borderToBaseline
@@ -87,15 +126,17 @@ function initBaselineAlignment() {
     }
   }
 
-  // NOW calculate grid origin from (possibly adjusted) first element
+  // Establish grid origin from first element's baseline
   const gridOrigin = getBaselinePosition(firstText)
 
   // Set grid offset for visual overlay
   const gridOffset = gridOrigin % GRID_UNIT
   document.documentElement.style.setProperty('--grid-offset', `${gridOffset}px`)
 
-  // Find all text elements and calculate corrections
-  const elements = document.querySelectorAll('main h1, main h2, main h3, main h4, main h5, main h6, main p, main li, main pre, main hr')
+  // Correct each text element's baseline to the nearest grid line
+  const elements = document.querySelectorAll(
+    'main h1, main h2, main h3, main h4, main h5, main h6, main p, main li, main pre, main hr'
+  )
 
   elements.forEach((el, i) => {
     let correction = 0
@@ -104,7 +145,7 @@ function initBaselineAlignment() {
     if (i === 0) return
 
     if (el.tagName === 'HR') {
-      // For HRs, align to the grid line ONE line above the next element's baseline
+      // Align HR to the grid line one line above the next element's baseline
       const nextEl = el.nextElementSibling
       if (nextEl) {
         const nextBaseline = getBaselinePosition(nextEl)
@@ -116,13 +157,11 @@ function initBaselineAlignment() {
         correction = (targetLine * GRID_UNIT) - hrRelative
       }
     } else if (el.classList.contains('rule-above')) {
-      // For rule-above elements, use same logic as first element:
-      // Make border-to-baseline distance a multiple of 24, THEN align baseline
+      // Make border-to-baseline distance a multiple of 24, then align baseline
       const baseline = getBaselinePosition(el)
       const borderTop = el.getBoundingClientRect().top + window.scrollY
       const borderToBaseline = baseline - borderTop
 
-      // Adjust padding so border-to-baseline is a multiple of 24
       const currentPadding = parseFloat(getComputedStyle(el).paddingTop) || 0
       const targetDistance = Math.round(borderToBaseline / GRID_UNIT) * GRID_UNIT
       const paddingAdjust = targetDistance - borderToBaseline
@@ -131,7 +170,6 @@ function initBaselineAlignment() {
         el.style.paddingTop = `${currentPadding + paddingAdjust}px`
       }
 
-      // Now calculate transform to align baseline to grid
       const newBaseline = getBaselinePosition(el)
       const baselineRel = newBaseline - gridOrigin
       const targetLine = Math.round(baselineRel / GRID_UNIT)
@@ -144,13 +182,10 @@ function initBaselineAlignment() {
       correction = expectedPos - relativePos
     }
 
-    // Only apply correction if it's more than 0.5px
     if (Math.abs(correction) > 0.5) {
-      // Use transform for visual-only shift (doesn't affect layout/siblings)
       el.style.transform = `translateY(${correction}px)`
     }
   })
-
 }
 
 // =============================================================================
@@ -158,16 +193,12 @@ function initBaselineAlignment() {
 // =============================================================================
 // Measures actual baseline positions and checks grid alignment.
 // Usage: Press Ctrl+B or call window.baselineAudit() from console.
-// Note: Uses getBaselinePosition defined in Baseline Alignment System above.
 
 function baselineAudit() {
-  const GRID_UNIT = 24 // pixels (1.5rem at 16px root)
+  const GRID_UNIT = 24
 
-  // Find all text elements in main content
   const selectors = 'main h1, main h2, main h3, main h4, main h5, main h6, main p, main li, main blockquote p, main pre'
   const elements = document.querySelectorAll(selectors)
-
-  // Also measure HRs (should land on grid lines)
   const hrs = document.querySelectorAll('main hr')
 
   const results = []
@@ -178,17 +209,15 @@ function baselineAudit() {
     const tag = el.tagName.toLowerCase()
     const text = el.textContent.trim().slice(0, 40) + (el.textContent.length > 40 ? '...' : '')
 
-    // Use first element's baseline as grid origin
     if (gridOrigin === null) {
       gridOrigin = baseline
     }
 
-    // Calculate offset from grid
     const relativePos = baseline - gridOrigin
     const gridLines = relativePos / GRID_UNIT
     const nearestLine = Math.round(gridLines)
     const offset = relativePos - (nearestLine * GRID_UNIT)
-    const onGrid = Math.abs(offset) < 1 // within 1px tolerance
+    const onGrid = Math.abs(offset) < 1
 
     results.push({
       index: i,
@@ -203,7 +232,6 @@ function baselineAudit() {
     })
   })
 
-  // Measure HRs separately
   const hrResults = []
   hrs.forEach((hr, i) => {
     const rect = hr.getBoundingClientRect()
@@ -224,7 +252,6 @@ function baselineAudit() {
     })
   })
 
-  // Summary
   const onGridCount = results.filter(r => r.onGrid).length
   const offGridItems = results.filter(r => !r.onGrid)
 
@@ -258,7 +285,6 @@ function baselineAudit() {
     console.table(hrResults)
   }
 
-  // Return structured data for programmatic use
   return { gridOrigin, gridUnit: GRID_UNIT, results, hrResults }
 }
 
@@ -270,5 +296,4 @@ document.addEventListener('keydown', (e) => {
   }
 })
 
-// Expose globally for console access
 window.baselineAudit = baselineAudit

@@ -17,12 +17,19 @@
 # Load Slim template support (local implementation for BT 2.x)
 require_relative "../lib/slim_support"
 
+# KaTeX math engine must be loaded before Kramdown processes content
+# (Kramdown silently falls back to plaintext if the engine isn't required)
+require "kramdown-math-katex"
+
 Bridgetown.configure do |config|
   # The base hostname & protocol for your site, e.g. https://example.com
   url ""
 
   # Available options are `erb` (default), `serbea`, or `liquid`
   template_engine "erb"
+
+  # Render LaTeX math at build time via KaTeX (use $$...$$ in markdown)
+  config.kramdown = { math_engine: "katex" }
 
   # Other options you might want to investigate:
 

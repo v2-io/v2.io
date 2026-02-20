@@ -1,3 +1,6 @@
+.obsidian/
+.obsidian.vimrc
+
 # Bridgetown
 output
 .bridgetown-cache

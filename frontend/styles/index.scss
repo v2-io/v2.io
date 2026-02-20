@@ -65,13 +65,15 @@ h1 {
   color: #b60000
 }
 h2 {
-  font-size: calc(var(--baseline) * 2);
+  font-size: calc(var(--baseline) * 1.5);
   line-height: calc(var(--baseline) * 2);
   border-top: 1px solid black;
-  padding-top: calc(var(--baseline) - 1px);
-  text-align: right;;
-  /*padding-top: calc(var(--baseline) / 2 - 4px);*/
-  /*padding-top: 1em;*/
+  padding-top: calc(var(--baseline) - 1px - (var(--baseline)*0.5));
+  // border(1) + padding(11) = 12px = half a baseline. To avoid a half-line grid
+  // offset that causes inconsistent translateY corrections on h2 elements,
+  // margin-top absorbs the other half-baseline so the total box is 6 × 24 = 144px.
+  margin-top: calc(var(--baseline) * 2.5);
+  //text-align: right;
   color: #006666
 }
 
@@ -168,8 +170,8 @@ main {
   padding: 0 calc(var(--baseline) * 2);
   margin: var(--baseline);
   background: var(--content-background);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border-radius: 2px;
+  //box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  //border-radius: 2px;
   /*margin-bottom: var(--baseline);*/
 
   @media (max-width: 500px) {
@@ -197,6 +199,17 @@ footer {
   /*border-top: 1px solid var(--heading-color);*/
   /*padding-top: calc(var(--baseline) - 1px);*/
   padding-top: calc(var(--baseline) / 2 - 1px);
+}
+
+// =============================================================================
+// KaTeX Math — Baseline Grid Integration
+// =============================================================================
+// KaTeX renders math to HTML at build time with its own sizing and spacing.
+// These overrides keep math expressions from breaking the 24px rhythm.
+
+// Display math: override KaTeX's default 1em (16px) margins with grid multiples
+.katex-display {
+  margin: $baseline 0;
 }
 
 // =============================================================================
