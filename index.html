@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vis Veritatis &middot; Joseph A. Wecker</title>
+  <meta name="description" content="Joseph A. Wecker &mdash; Independent Research">
+  <meta name="theme-color" content="#fafaf7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#15140f" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --fg: #1a1a1a;
+      --fg-muted: #6b665c;
+      --bg: #fafaf7;
+      --rule: #d8d4cc;
+      --link: #1a1a1a;
+      --accent: #8a6a36;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --fg: #ece9e2;
+        --fg-muted: #9a958a;
+        --bg: #15140f;
+        --rule: #38332b;
+        --link: #ece9e2;
+        --accent: #d4b07a;
+      }
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      display: grid;
+      place-items: center;
+      padding: 2rem 1.5rem;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    main {
+      text-align: center;
+      max-width: 36rem;
+    }
+    .wordmark {
+      font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+      font-size: clamp(2.25rem, 6vw, 3.25rem);
+      font-weight: 500;
+      letter-spacing: 0.005em;
+      margin: 0;
+      line-height: 1.1;
+    }
+    .wordmark .domain {
+      display: inline-block;
+      margin-left: 0.35em;
+      font-size: 0.42em;
+      color: var(--fg-muted);
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      vertical-align: 0.55em;
+    }
+    .name {
+      margin: 1.75rem 0 0;
+      font-size: 1.0625rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .role {
+      margin: 0.25rem 0 0;
+      font-size: 0.9375rem;
+      font-weight: 400;
+      color: var(--fg-muted);
+      letter-spacing: 0.04em;
+    }
+    hr {
+      border: 0;
+      border-top: 1px solid var(--rule);
+      width: 3rem;
+      margin: 2.25rem auto;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 1.75rem;
+      flex-wrap: wrap;
+    }
+    nav a {
+      color: var(--link);
+      text-decoration: none;
+      font-size: 0.9375rem;
+      letter-spacing: 0.03em;
+      border-bottom: 1px solid transparent;
+      padding-bottom: 2px;
+      transition: color 140ms ease, border-color 140ms ease;
+    }
+    nav a:hover,
+    nav a:focus-visible {
+      color: var(--accent);
+      border-bottom-color: currentColor;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1 class="wordmark">Vis Veritatis<span class="domain">v2.io</span></h1>
+    <p class="name">Joseph A. Wecker</p>
+    <p class="role">Independent Research</p>
+    <hr aria-hidden="true">
+    <nav aria-label="Profiles">
+      <a href="https://www.linkedin.com/in/REPLACE-ME/" rel="me">LinkedIn</a>
+      <a href="https://github.com/v2-io" rel="me">GitHub &middot; v2-io</a>
+      <a href="https://github.com/josephwecker" rel="me">GitHub &middot; josephwecker</a>
+    </nav>
+  </main>
+</body>
+</html>
