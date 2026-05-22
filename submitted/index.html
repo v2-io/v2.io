@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Submitted Manuscripts &middot; Vis Veritatis</title>
+  <meta name="description" content="Manuscripts currently under peer review.">
+  <meta name="theme-color" content="#fafaf7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#15140f" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --fg: #1a1a1a;
+      --fg-muted: #8a857a;
+      --fg-quiet: #6e6a62;
+      --bg: #fafaf7;
+      --bg-alt: #f3f0e8;
+      --rule: #d8d4cc;
+      --link: #1a1a1a;
+      --accent: #8a6a36;
+      --notice-bg: #fbf3e4;
+      --notice-border: #d4b07a;
+      --notice-fg: #5c4a23;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --fg: #ece9e2;
+        --fg-muted: #9a958a;
+        --fg-quiet: #7e7a72;
+        --bg: #15140f;
+        --bg-alt: #1c1b16;
+        --rule: #38332b;
+        --link: #ece9e2;
+        --accent: #d4b07a;
+        --notice-bg: #261f12;
+        --notice-border: #8a6a36;
+        --notice-fg: #d4b07a;
+      }
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+      padding: 3rem 1.5rem 4rem;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    main {
+      max-width: 56rem;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .wordmark {
+      font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 500;
+      letter-spacing: 0.005em;
+      margin: 0;
+      line-height: 1.1;
+    }
+    .wordmark a {
+      color: var(--fg);
+      text-decoration: none;
+    }
+    .wordmark a:hover { color: var(--accent); }
+    .wordmark .domain {
+      display: inline-block;
+      margin-left: 0.35em;
+      font-size: 0.5em;
+      color: var(--fg-muted);
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      vertical-align: 0.55em;
+    }
+    h1 {
+      font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+      font-weight: 500;
+      font-size: clamp(1.75rem, 4.5vw, 2.5rem);
+      margin: 1.75rem 0 0.25rem;
+      letter-spacing: 0.005em;
+      line-height: 1.15;
+    }
+    .subtitle {
+      margin: 0;
+      color: var(--fg-muted);
+      font-size: 0.9375rem;
+      letter-spacing: 0.04em;
+    }
+    .notice {
+      margin: 2rem 0 2.5rem;
+      padding: 0.875rem 1.125rem;
+      background: var(--notice-bg);
+      border-left: 3px solid var(--notice-border);
+      color: var(--notice-fg);
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      border-radius: 2px;
+    }
+    .notice strong {
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .table-wrap {
+      overflow-x: auto;
+      margin: 0 -0.5rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9375rem;
+    }
+    thead th {
+      text-align: left;
+      font-weight: 500;
+      font-size: 0.8125rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+      border-bottom: 1px solid var(--rule);
+      padding: 0.75rem 0.75rem;
+      white-space: nowrap;
+    }
+    tbody td {
+      padding: 1rem 0.75rem;
+      border-bottom: 1px solid var(--rule);
+      vertical-align: top;
+    }
+    tbody tr:last-child td { border-bottom: 0; }
+    .title {
+      font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+      font-weight: 500;
+      font-size: 1.0625rem;
+      line-height: 1.35;
+    }
+    .title a {
+      color: var(--link);
+      text-decoration: none;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 1px;
+      transition: color 140ms ease, border-color 140ms ease;
+    }
+    .title a:hover,
+    .title a:focus-visible {
+      color: var(--accent);
+      border-bottom-color: currentColor;
+      outline: none;
+    }
+    .subtitle-row {
+      display: block;
+      margin-top: 0.25rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-weight: 400;
+      font-size: 0.875rem;
+      color: var(--fg-quiet);
+      font-style: italic;
+    }
+    .venue {
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .venue-detail {
+      display: block;
+      font-weight: 400;
+      font-size: 0.8125rem;
+      color: var(--fg-quiet);
+      margin-top: 0.125rem;
+      font-style: normal;
+    }
+    .date {
+      color: var(--fg-quiet);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .status {
+      color: var(--fg-quiet);
+      font-size: 0.875rem;
+      white-space: nowrap;
+    }
+    hr.footer-rule {
+      border: 0;
+      border-top: 1px solid var(--rule);
+      width: 3rem;
+      margin: 3rem auto 1.5rem;
+    }
+    footer {
+      text-align: center;
+      color: var(--fg-muted);
+      font-size: 0.875rem;
+      letter-spacing: 0.02em;
+    }
+    footer a {
+      color: var(--link);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: color 140ms ease, border-color 140ms ease;
+    }
+    footer a:hover,
+    footer a:focus-visible {
+      color: var(--accent);
+      border-bottom-color: currentColor;
+    }
+    @media (max-width: 32rem) {
+      tbody td { padding: 0.875rem 0.5rem; }
+      thead th { padding: 0.625rem 0.5rem; }
+      .title { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="header">
+      <p class="wordmark"><a href="/">Vis Veritatis<span class="domain">v2.io</span></a></p>
+      <h1>Submitted Manuscripts</h1>
+      <p class="subtitle">Joseph A. Wecker &middot; 2026</p>
+    </header>
+
+    <p class="notice">
+      <strong>Submitted for review &mdash; do not redistribute.</strong>
+      The manuscripts listed below are under active peer review. They are shared here
+      for collaborators, reviewers, and referees by direct link only. Please do not
+      circulate, post, cite from, or upload these PDFs without prior agreement.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Manuscript</th>
+            <th scope="col">Venue</th>
+            <th scope="col">Submitted</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="title">
+              <a href="wecker-2026-behavioral-evaluation-cannot-certify-aies.pdf">What Behavioral Evaluation of LLM Agents Cannot Certify</a>
+              <span class="subtitle-row">An Architectural Floor on Evidence for Causal Reasoning</span>
+            </td>
+            <td class="venue">AIES 2026<span class="venue-detail">Submission 1465</span></td>
+            <td class="date">2026-05-21</td>
+            <td class="status">Under review</td>
+          </tr>
+          <tr>
+            <td class="title">
+              <a href="wecker-2026-performed-not-observed-aies.pdf">Performed, Not Observed</a>
+              <span class="subtitle-row">Text as Causal Substrate</span>
+            </td>
+            <td class="venue">AIES 2026<span class="venue-detail">Submission 1468</span></td>
+            <td class="date">2026-05-21</td>
+            <td class="status">Under review</td>
+          </tr>
+          <tr>
+            <td class="title">
+              <a href="wecker-2026-granted-agency-between-sovereigns-inquiry.pdf">Granted Agency Between Sovereigns</a>
+              <span class="subtitle-row">A Structural Form for Extending Agency to AI Systems</span>
+            </td>
+            <td class="venue">Inquiry<span class="venue-detail">SI: AI Agents</span></td>
+            <td class="date">2026-05-10</td>
+            <td class="status">Under review</td>
+          </tr>
+          <tr>
+            <td class="title">
+              <a href="wecker-2026-tragedy-of-the-confident-agent-neurips.pdf">Tragedy of the Confident Agent</a>
+              <span class="subtitle-row">Forced Exploration for Survival in Drifting Environments</span>
+            </td>
+            <td class="venue">NeurIPS 2026<span class="venue-detail">Main Track</span></td>
+            <td class="date">2026-05-07</td>
+            <td class="status">Under review</td>
+          </tr>
+          <tr>
+            <td class="title">
+              <a href="wecker-2026-unified-convergence-non-stationary-rl-neurips.pdf">A Unified Convergence Theory for Non-Stationary Reinforcement Learning</a>
+            </td>
+            <td class="venue">NeurIPS 2026<span class="venue-detail">Main Track</span></td>
+            <td class="date">2026-05-07</td>
+            <td class="status">Under review</td>
+          </tr>
+          <tr>
+            <td class="title">
+              <a href="wecker-2026-llm-hallucination-upper-bound-neurips.pdf">How Much Can LLMs Hallucinate?</a>
+              <span class="subtitle-row">An Upper Bound on Goal-Coupling Displacement</span>
+            </td>
+            <td class="venue">NeurIPS 2026<span class="venue-detail">Main Track</span></td>
+            <td class="date">2026-05-07</td>
+            <td class="status">Under review</td>
+          </tr>
+          <tr>
+            <td class="title">
+              <a href="wecker-2026-epistemic-hedging-geometry-tacl.pdf">Epistemic Hedging is Linear in Pretrained Sentence Embeddings</a>
+            </td>
+            <td class="venue">TACL<span class="venue-detail">Paper ID 11139</span></td>
+            <td class="date">2026-05-02</td>
+            <td class="status">Under review</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="footer-rule" aria-hidden="true">
+    <footer>
+      Correspondence: <a href="mailto:joseph.wecker@v2.io">joseph.wecker@v2.io</a>
+    </footer>
+  </main>
+</body>
+</html>
