@@ -3,7 +3,7 @@
 Single static landing page for [v2.io](https://v2.io), served via GitHub Pages
 from the `main` branch root.
 
-- `index.html` — the page (no build step, no dependencies)
+- `index.html` — the page (no build step; it loads Inter and Crimson Text from Google Fonts and the mark and props from `brand/`)
 - `CNAME` — custom domain binding (`v2.io`)
 - `.nojekyll` — disables Jekyll processing on GitHub Pages
 - `brand/` — the v2 brush mark, the 真 seal, the lockup specimen, and the script that draws the mark (its README says how)

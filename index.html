@@ -5,119 +5,101 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Vis Veritatis - Joseph A. Wecker</title>
   <meta name="description" content="Joseph A. Wecker &mdash; Independent Research">
-  <meta name="theme-color" content="#fafaf7" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#15140f" media="(prefers-color-scheme: dark)">
-  <link rel="icon" href="data:,">
+  <meta name="theme-color" content="#e9e3d8" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#25292d" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="/brand/v2-mark.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400&family=Crimson+Text&display=swap">
+  <!-- The v2.io home page, built on the v2 design system: the lockup from /brand on a washi desk, or slate in dark
+       mode, with a few of the desk's stones and inkwells. Sizes and the place of .io come from
+       /brand/v2-mark-layout.json (io_baseline_left 85.29% / 74.72%, io 0.2026, motto 0.0755 of the mark's width). -->
   <style>
     :root {
-      --fg: #1a1a1a;
-      --fg-muted: #8a857a;
-      --bg: #fafaf7;
-      --rule: #d8d4cc;
-      --link: #1a1a1a;
-      --accent: #8a6a36;
+      --desk: #e9e3d8; --desk-hi: #efe9df; --desk-lo: #e2dbcd;
+      --ink: #2d2a26; --muted: #5d574f; --sub: #4e4842; --rule: #e0d8ca; --kin: #8a6a36;
+      --io: #2d2a26; --io-a: .70; --io-w: 400; --sub-a: .72;
+      --mark-light: inline; --mark-dark: none;
+      --W: min(440px, 74vw);
     }
     @media (prefers-color-scheme: dark) {
       :root {
-        --fg: #ece9e2;
-        --fg-muted: #9a958a;
-        --bg: #15140f;
-        --rule: #38332b;
-        --link: #ece9e2;
-        --accent: #d4b07a;
+        --desk: #25292d; --desk-hi: #2e3338; --desk-lo: #1e2125;
+        --ink: #ece6db; --muted: #aba499; --sub: #c98a69; --rule: #303230; --kin: #d4b07a;
+        --io: #c98a69; --io-a: .85; --io-w: 300;
+        --mark-light: none; --mark-dark: inline;
       }
     }
     *, *::before, *::after { box-sizing: border-box; }
     html, body { height: 100%; }
     body {
       margin: 0;
-      background: var(--bg);
-      color: var(--fg);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      font-size: 16px;
-      line-height: 1.5;
-      display: grid;
-      place-items: center;
-      padding: 2rem 1.5rem;
+      background: radial-gradient(120% 90% at 50% 40%, var(--desk-hi) 0%, var(--desk) 70%, var(--desk-lo) 100%) fixed, var(--desk);
+      color: var(--ink);
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
-    main {
-      text-align: center;
-      max-width: 36rem;
-    }
-    .wordmark {
-      font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
-      font-size: clamp(2.25rem, 6vw, 3.25rem);
-      font-weight: 500;
-      letter-spacing: 0.005em;
-      margin: 0;
-      line-height: 1.1;
-    }
-    .wordmark .domain {
-      display: inline-block;
-      margin-left: 0.35em;
-      font-size: 0.42em;
-      color: var(--fg-muted);
-      font-weight: 400;
-      letter-spacing: 0.04em;
-      vertical-align: 0.55em;
-    }
-    .name {
-      font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
-      margin: 1.75rem 0 0;
-      font-size: 1.125rem;
-      font-weight: 500;
-      letter-spacing: 0.01em;
-    }
-    .role {
-      margin: 0.25rem 0 0;
-      font-size: 0.9375rem;
-      font-weight: 400;
-      color: var(--fg-muted);
-      letter-spacing: 0.04em;
-    }
-    hr {
-      border: 0;
-      border-top: 1px solid var(--rule);
-      width: 3rem;
-      margin: 2.25rem auto;
-    }
-    nav {
-      display: flex;
-      justify-content: center;
-      gap: 1.75rem;
-      flex-wrap: wrap;
-    }
-    nav a {
-      color: var(--link);
-      text-decoration: none;
-      font-size: 0.9375rem;
-      letter-spacing: 0.03em;
-      border-bottom: 1px solid transparent;
-      padding-bottom: 2px;
-      transition: color 140ms ease, border-color 140ms ease;
-    }
-    nav a:hover,
-    nav a:focus-visible {
-      color: var(--accent);
-      border-bottom-color: currentColor;
-      outline: none;
+    .desk { position: relative; min-height: 100%; overflow: hidden; display: grid; place-items: center; padding: 3rem 1rem; }
+    main { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; text-align: center; }
+
+    /* the lockup */
+    .mark { position: relative; width: var(--W); margin: 0; font-size: 1rem; }
+    .mark img { display: block; width: 100%; }
+    .mark .light { display: var(--mark-light); } .mark .dark { display: var(--mark-dark); }
+    .io { position: absolute; left: 85.29%; top: 74.72%; transform: translateY(-100%);
+          font-size: calc(var(--W) * .2026); font-weight: var(--io-w); letter-spacing: .025em; line-height: .74;
+          color: var(--io); opacity: var(--io-a); }
+    .motto { position: relative; margin: calc(var(--W) * .07) 0 0; font-size: calc(var(--W) * .0755); font-weight: 200;
+             letter-spacing: .14em; line-height: 1; white-space: nowrap; color: var(--sub); }
+    .motto span { opacity: var(--sub-a); }
+    .motto img { position: absolute; left: calc(100% + .9em); bottom: 0; height: .86em; }
+
+    /* who, and where else */
+    .name { font-family: "Crimson Text", Georgia, serif; font-size: 1.25rem; margin: 2.6rem 0 0; letter-spacing: .01em; }
+    .role { margin: .3rem 0 0; font-size: .9375rem; letter-spacing: .04em; color: var(--muted); }
+    hr { border: 0; border-top: 1px solid var(--rule); width: 3rem; margin: 2rem auto; }
+    nav { display: flex; justify-content: center; gap: .6rem 1.75rem; flex-wrap: wrap; max-width: 34rem; }
+    nav a { color: var(--ink); text-decoration: none; font-size: .9375rem; letter-spacing: .03em;
+            border-bottom: 1px solid transparent; padding-bottom: 2px; transition: color 140ms ease, border-color 140ms ease; }
+    nav a:hover, nav a:focus-visible { color: var(--kin); border-bottom-color: currentColor; outline: none; }
+
+    /* the desk's objects: cut out with their own shadows, lit from above, so upright; never under the words */
+    .prop { position: absolute; z-index: 0; pointer-events: none; user-select: none; }
+    .inkwell { width: clamp(150px, 19vw, 250px); top: clamp(-70px, -4vw, -30px); right: clamp(-80px, -4vw, -30px); }
+    .stone-a { width: clamp(150px, 18vw, 250px); bottom: clamp(-60px, -3vw, -24px); left: clamp(-70px, -3vw, -20px); transform: rotate(-4deg); }
+    .stone-b { width: clamp(90px, 10vw, 140px); bottom: clamp(30px, 6vh, 80px); right: clamp(24px, 9vw, 160px); transform: rotate(3deg); }
+    @media (max-width: 640px) {
+      /* .io hangs about 7% of the mark's width past its box, so the mark leaves room for it */
+      :root { --W: 64vw; }
+      .stone-b { display: none; }
+      .inkwell { width: 120px; top: -48px; right: -52px; }
+      .stone-a { width: 130px; bottom: -44px; left: -50px; }
     }
   </style>
 </head>
 <body>
-  <main>
-    <h1 class="wordmark">Vis Veritatis<span class="domain">v2.io</span></h1>
-    <p class="name">Joseph A. Wecker</p>
-    <p class="role">Independent Research</p>
-    <hr aria-hidden="true">
-    <nav aria-label="Profiles">
-      <a href="https://www.linkedin.com/in/josephwecker/" rel="me">LinkedIn</a>
-      <a href="https://orcid.org/0009-0004-2599-4766" rel="me">ORCID</a>
-      <a href="https://github.com/v2-io" rel="me">GitHub &middot; v2-io</a>
-      <a href="https://github.com/josephwecker" rel="me">GitHub &middot; josephwecker</a>
-    </nav>
-  </main>
+  <div class="desk">
+    <img class="prop inkwell" src="/brand/props/inkwell-black-b.webp" alt="">
+    <img class="prop stone-a" src="/brand/props/stone-dark-oval.webp" alt="">
+    <img class="prop stone-b" src="/brand/props/stone-pale.webp" alt="">
+    <main>
+      <h1 class="mark">
+        <img class="light" src="/brand/v2-mark.svg" alt="v2.io">
+        <img class="dark" src="/brand/v2-mark-vermilion.svg" alt="v2.io">
+        <span class="io" aria-hidden="true">.io</span>
+      </h1>
+      <p class="motto"><span>VIS VERITATIS</span><img src="/brand/v2-seal.svg" alt=""></p>
+      <p class="name">Joseph A. Wecker</p>
+      <p class="role">Independent Research</p>
+      <hr aria-hidden="true">
+      <nav aria-label="Profiles">
+        <a href="https://www.linkedin.com/in/josephwecker/" rel="me">LinkedIn</a>
+        <a href="https://orcid.org/0009-0004-2599-4766" rel="me">ORCID</a>
+        <a href="https://github.com/v2-io" rel="me">GitHub &middot; v2-io</a>
+        <a href="https://github.com/josephwecker" rel="me">GitHub &middot; josephwecker</a>
+      </nav>
+    </main>
+  </div>
 </body>
 </html>
