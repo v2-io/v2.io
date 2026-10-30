@@ -13,7 +13,7 @@ The v2 mark is one of the UDON mark's own brush strokes drawn along the skeleton
 | `specimen/lockup.html` | the lockup on washi and on slate |
 | `specimen/lockup.png` | a screenshot of the specimen |
 | `../index.html` | the v2.io home page, built on this lockup: washi, or slate in dark mode, with a few desk props; the name in Crimson Text, the role and links in Inter |
-| `props/*.webp` | stones and inkwells for the desk, from `udon/ux/brand/props/` (their README has how they were cut and their edges and shadows calibrated); lossless WebP, pixel-identical to the PNGs, so convert any more the same way (`magick X.png -define webp:lossless=true -define webp:exact=true X.webp`), never lossy; lit from above, so keep them upright |
+| `props/*.webp` | stones and inkwells for the desk, from `udon/ux/brand/props/` (their README has how they were cut and their edges and shadows calibrated); lossless WebP, pixel-identical to the PNGs, so convert any more the same way (`magick X.png -define webp:lossless=true -define webp:exact=true X.webp`), never lossy; lit from above, so keep them upright. `stone-pale-white.webp` is the pale stone with its body taken 75% toward neutral grey and its tone lifted toward white (1 − (1 − Y)^1.45), so it stands off the washi desk instead of matching it; its shadow pixels are the original's, unchanged |
 | `tools/v2brush.py` | the script that draws the mark |
 
 ## The lockup
