@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>v2.io lockup</title>
+<!-- The v2.io lockup on washi and on slate: the brush mark; .io in Inter at UDON's word scale, beside the 2's bowl;
+     VIS VERITATIS small and thin beneath, with the 真 seal tucked onto its end.
+     .io's place and the type sizes come from ../v2-mark-layout.json, which tools/v2brush.py writes with the mark. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400&display=swap">
+<style>
+  :root { --W: 560px; }
+  body { margin: 0; display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; font-family: "Inter", sans-serif; }
+  .sheet { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 72px 44px; }
+  /* washi: .io in ink at 70%; the motto in the subtitle colour at 72% */
+  .washi { background: #f8f4ec; --io: #2d2a26; --io-a: .70; --io-w: 400; --motto: #4e4842; }
+  /* slate: .io a dull terracotta wash; the motto the same colour, quieter */
+  .slate { background: #1f2020; --io: #c98a69; --io-a: .85; --io-w: 300; --motto: #c98a69; }
+  .mark { position: relative; width: var(--W); }
+  .mark img { display: block; width: 100%; }
+  .io { position: absolute; left: 85.29%; top: 74.72%; transform: translateY(-100%);
+        font-size: calc(var(--W) * 0.2026); font-weight: var(--io-w); letter-spacing: .025em; line-height: .74;
+        color: var(--io); opacity: var(--io-a); }
+  .motto { position: relative; margin-top: calc(var(--W) * .07); font-size: calc(var(--W) * 0.0755);
+           font-weight: 200; letter-spacing: .14em; line-height: 1; white-space: nowrap; color: var(--motto); }
+  .motto span { opacity: .72; }
+  /* the seal tucked onto the end of the motto, after an extra space; the motto stays centred on the mark */
+  .seal { position: absolute; left: calc(100% + .9em); bottom: 0; height: .86em; }
+  @media (max-width: 1100px) { body { grid-template-columns: 1fr; } :root { --W: min(560px, 80vw); } }
+</style>
+</head>
+<body>
+  <section class="sheet washi">
+    <div class="mark"><img src="../v2-mark.svg" alt="v2"><span class="io">.io</span></div>
+    <div class="motto"><span>VIS VERITATIS</span><img class="seal" src="../v2-seal.svg" alt=""></div>
+  </section>
+  <section class="sheet slate">
+    <div class="mark"><img src="../v2-mark-vermilion.svg" alt="v2"><span class="io">.io</span></div>
+    <div class="motto"><span>VIS VERITATIS</span><img class="seal" src="../v2-seal.svg" alt=""></div>
+  </section>
+</body>
+</html>

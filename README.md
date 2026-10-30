@@ -6,6 +6,8 @@ from the `main` branch root.
 - `index.html` — the page (no build step, no dependencies)
 - `CNAME` — custom domain binding (`v2.io`)
 - `.nojekyll` — disables Jekyll processing on GitHub Pages
+- `brand/` — the v2 brush mark, the 真 seal, the lockup specimen, and the script that draws the mark (its README says how)
+- `.archive/` — explorations set aside, each folder with a README (published with the rest of the root, like `_archive/`)
 - `_archive/` — the prior Bridgetown scaffold and exploration material,
   preserved in place for reference. Underscore-prefix is conventional for
   "do not deploy" but `.nojekyll` means there is no build step anyway;
