@@ -13,7 +13,7 @@ The v2 mark is one of the UDON mark's own brush strokes drawn along the skeleton
 | `specimen/lockup.html` | the lockup on washi and on slate |
 | `specimen/lockup.png` | a screenshot of the specimen |
 | `specimen/home.html` | a proposed v2.io home page on this lockup: washi, or slate in dark mode, with a few desk props; not yet the live `index.html` (to make it live, copy it over `index.html`: its paths are site-absolute) |
-| `props/*.webp` | stones and inkwells for the desk, converted from `udon/ux/brand/props/` (their README has how they were cut); lit from above, so keep them upright |
+| `props/*.webp` | stones and inkwells for the desk, from `udon/ux/brand/props/` (their README has how they were cut and their edges and shadows calibrated); lossless WebP, pixel-identical to the PNGs, so convert any more the same way (`magick X.png -define webp:lossless=true -define webp:exact=true X.webp`), never lossy; lit from above, so keep them upright |
 | `tools/v2brush.py` | the script that draws the mark |
 
 ## The lockup
