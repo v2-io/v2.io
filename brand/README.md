@@ -31,15 +31,15 @@ The mark, with `.io` to the right of the 2's bowl, its baseline level with the m
 
 `tools/v2brush.py` does it in four steps; its header has the detail.
 
-1. **The brush.** The UDON mark (`~/src/arch/firmatum/udon/ux/brand/udon-mark.svg`) is rasterised layer by layer and split into its four strokes. The second from the left, the straight one with a clean start and a split dry-brush end, is the brush.
-2. **The skeleton.** The 2's centreline runs midway between the outer and inner Bézier edges of the 2 in `v2-io-jaw.svg` (the earlier geometric logo), paired at equal fractions of their length, then down the middle of the diagonal, round a small fillet, and along the base. The V's centreline starts at the middle of the top of the old V stroke and is aimed into the 2's corner, so that the V's taper lands where the 2's diagonal meets the base.
+1. **The brush.** The UDON mark (`~/src/arch/firmatum/udon/ux/brand/udon-mark.svg`) is rasterised layer by layer and split into its four strokes. The second from the left, the straight one with a clean start and a split dry-brush end, is the brush. Its flat start is rounded a little (`--round-start 0.6`, in brush half-widths), as a real brush tip would leave it when it first presses down.
+2. **The skeleton.** The 2's head is a true circle, like the opening of an ensō. It is fitted to the bowl of the 2 in `v2-io-jaw.svg` (the earlier geometric logo), whose centreline runs midway between that 2's outer and inner Bézier edges: the same left, right and top. The brush touches down low on the left (at 160°, `--bowl-start`) and sweeps over the top until a straight line leaves the circle on an exact tangent for the corner; then it runs down the diagonal, round a small fillet, and along the base. `--bowl spline` draws the logo's own bowl instead. The V's centreline starts at the middle of the top of the old V stroke and is aimed into the 2's corner, so that the V's taper lands where the 2's diagonal meets the base.
 3. **The mapping.** Each pixel near a path finds its nearest point on the path: how far along the path that is picks a row of the brush, and how far across picks a column. The brush's start and end map unstretched; only its middle stretches to the length of the path. The brush is mirrored so that, as in the UDON bowl, the solid edge is on the outside and the bristles break up on the inside: along the top of the 2's base, along the inner edge of the V.
 4. **The trace.** potrace traces the core and the edge separately, and the two are written as one SVG in each ink.
 
-The stroke is 12.4% of the mark's height (UDON's is 7.6%: the v2 has fewer strokes, so each carries more weight). To regenerate, or to try another weight:
+The stroke is 12.4% of the mark's height (UDON's is 7.6%: the v2 has fewer strokes, so each carries more weight). Run with no options, the script reproduces the mark as it is. To try another weight, head or start:
 
 ```bash
-python3 brand/tools/v2brush.py --ratio 0.13
+python3 brand/tools/v2brush.py --ratio 0.13 --bowl round --bowl-start 160 --round-start 0.6
 ```
 
 It needs numpy, scipy, Pillow, `potrace` and `rsvg-convert`, and writes `v2-mark.svg`, `v2-mark-vermilion.svg` and `v2-mark-layout.json` here.

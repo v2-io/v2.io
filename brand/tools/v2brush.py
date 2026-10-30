@@ -8,10 +8,12 @@ How it works (the same idea as a vector "art brush"):
 
 1. The brush. The UDON mark (udon/ux/brand/udon-mark.svg) is rasterised layer by layer (the dense core and the
    dry-brush edge) and split into its four strokes. Stroke B, the straight one with a clean start and a split
-   dry-brush end, is the brush.
-2. The skeleton. The 2's centreline runs midway between the outer and inner edges of the 2 in Joseph's v2 logo
-   (v2-io-jaw.svg, path87), paired at equal fractions of their length; then straight down the middle of the
-   diagonal, round a small fillet, and along the base. The V's centreline starts at the middle of the top of the
+   dry-brush end, is the brush. Its flat start is rounded a little, as a real brush tip would leave it.
+2. The skeleton. The 2's head is a true circle, like the opening of an ensō: fitted to the bowl of the 2 in
+   Joseph's v2 logo (v2-io-jaw.svg, path87: its centreline runs midway between that 2's outer and inner edges),
+   entered low on the left and swept over the top until a straight line leaves it on a tangent for the corner;
+   then straight down the diagonal, round a small fillet, and along the base. (`--bowl spline` uses the logo's
+   own bowl instead.) The V's centreline starts at the middle of the top of the
    V stroke in that logo and is aimed into the 2's corner.
 3. The mapping. Every pixel near a path finds its nearest point on the path: its distance along the path picks a
    row of the brush, its signed distance across the path picks a column. The brush's start and end are mapped
@@ -59,6 +61,26 @@ def udon_stroke(index, tmp, margin=12):
     ys, xs = np.where(m)
     y0, y1, x0, x1 = ys.min() - margin, ys.max() + margin, xs.min() - margin, xs.max() + margin
     return np.stack([(fe * m)[y0:y1, x0:x1], (co * m)[y0:y1, x0:x1]])
+
+def round_start(S, depth):
+    """Round the brush's first touch: within `depth` brush half-widths of where the ink starts, keep only what lies
+    inside a half-ellipse as wide as the brush, so the corners of a flat start come off as a real tip would leave
+    them. The edge is softened over a pixel and a half; the brush beyond the start is untouched."""
+    if depth <= 0: return S
+    a = (S[0] + S[1]) > 0.5; ys, xs = np.where(a); y0 = ys.min()
+    body = a[y0 + 200:y0 + 600]                       # the brush's width, measured along its body
+    half = np.median(body.sum(1)) / 2
+    ax = brush_axis(S); L = int(round(depth * half))
+    soft = np.ones(S.shape[1:])
+    cols = np.arange(S.shape[2])
+    for r in range(y0, y0 + L):
+        ink = np.where(a[r])[0]
+        if len(ink) == 0: continue
+        # pull each side of this row toward the axis by the ellipse's factor, so the cap meets the body's own edges
+        f = math.sqrt(max(0.0, 1 - (1 - (r - y0) / L) ** 2))
+        lo = ax - (ax - ink.min()) * f; hi = ax + (ink.max() - ax) * f
+        soft[r] = np.clip(np.minimum(cols - lo, hi - cols) / 1.5 + 0.5, 0, 1)
+    return S * soft[None]
 
 def brush_axis(S):
     """The brush's centre column, measured across its first rows (the clean start)."""
@@ -110,18 +132,38 @@ def fillet(T0, C, B, r):
 def line(a, b, n=300):
     return np.array([a + (b - a) * s for s in np.linspace(0, 1, n)])
 
-def two_skeleton(base_end=438.4, corner_r=1.3):
+def round_bowl(spline_bowl, corner, scale=1.0, start=143.0):
+    """A true circle for the 2's head, like the opening of an ensō: fitted to the spline bowl's left, right and top
+    (radius times `scale`, top kept where it was), entered at `start` degrees (screen angles: 90 is straight down,
+    180 left, 270 up) and swept over the top to the point where a straight line leaves it on a tangent for `corner`."""
+    xmin, xmax, ytop = spline_bowl[:, 0].min(), spline_bowl[:, 0].max(), spline_bowl[:, 1].min()
+    r = (xmax - xmin) / 2 * scale
+    c = np.array([(xmin + xmax) / 2, ytop + r])
+    v = corner - c; dist = np.linalg.norm(v)
+    phi, beta = math.atan2(v[1], v[0]), math.acos(r / dist)
+    # of the two tangent points, the one where sweeping on (increasing angle) heads toward the corner
+    for t in (phi + beta, phi - beta):
+        P = c + r * np.array([math.cos(t), math.sin(t)]); d = np.array([-math.sin(t), math.cos(t)])
+        if np.dot(corner - P, d) > 0: tT = t; break
+    t0 = math.radians(start)
+    while tT <= t0: tT += 2 * math.pi
+    ts = np.linspace(t0, tT, 1500)
+    return c[None, :] + r * np.c_[np.cos(ts), np.sin(ts)]
+
+def two_skeleton(base_end=438.4, corner_r=1.3, bowl='spline', bowl_scale=1.0, bowl_start=143.0):
     # the 2 of v2-io-jaw.svg (path87), in absolute coordinates
     c1 = cubic((416.87437, -139.71163), (405.47745, -139.62593), (399.71791, -130.70481), (409.0397, -119.25064))
     c2 = cubic((413.15005, -125.06993), (404.58957, -136.63024), (429.42406, -137.17116), (421.62137, -125.82543))
     c3 = cubic((428.04475, -123.75683), (431.01492, -127.92787), (430.25532, -137.04704), (422.07612, -139.06671))
     c4 = cubic((422.07612, -139.06671), (420.24542, -139.51876), (418.5025, -139.72388), (416.87437, -139.71163))
     outer = np.vstack([c1[::-1], c4[::-1][1:], c3[::-1][1:]])   # from the terminal, over the top, to the diagonal
-    bowl = (by_length(outer, 1500) + by_length(c2, 1500)) / 2
+    head = (by_length(outer, 1500) + by_length(c2, 1500)) / 2
     corner = np.array([(404.72937 + 416.84956) / 2, (-101.91165 - 108.03531) / 2])
+    if bowl == 'round':
+        head = round_bowl(head, corner, bowl_scale, bowl_start)
     end = np.array([base_end, corner[1]])
-    a, b, arc = fillet(bowl[-1], corner, end, corner_r)
-    return np.vstack([bowl, line(bowl[-1], a)[1:], arc[1:], line(b, end)[1:]])
+    a, b, arc = fillet(head[-1], corner, end, corner_r)
+    return np.vstack([head, line(head[-1], a)[1:], arc[1:], line(b, end)[1:]])
 
 def v_skeleton(aim=(409.0, -106.4)):
     top = np.array([(383.8986 + 391.88) / 2, (-138.77503 - 138.71) / 2])   # middle of the top of the V stroke
@@ -152,14 +194,19 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     ap.add_argument('--ratio', type=float, default=0.13, help="stroke width as a fraction of the 2's height (0.13 measures about 12.4%%)")
     ap.add_argument('--out', default=os.path.dirname(HERE), help='directory for the SVGs and layout file')
+    ap.add_argument('--bowl', choices=('spline', 'round'), default='round', help="the 2's head: the original logo's spline, or a true circle like the opening of an ensō")
+    ap.add_argument('--bowl-scale', type=float, default=1.0, help='round bowl: radius relative to the spline bowl it is fitted to')
+    ap.add_argument('--bowl-start', type=float, default=160.0, help='round bowl: where the brush touches down, in screen degrees (90 down, 180 left)')
+    ap.add_argument('--round-start', type=float, default=0.6, help="round the brush's first touch over this many half-widths (0 keeps UDON's flat start; 1 is a full half-round)")
     a = ap.parse_args()
     with tempfile.TemporaryDirectory() as tmp:
-        S = udon_stroke(1, tmp)
+        S = round_start(udon_stroke(1, tmp), a.round_start)
         K = 61.0 * 0.0805 / a.ratio                 # pixels per skeleton unit: at 61, brush B is 8.05% of the height
         off = np.array([380, -142]); place = lambda Q: (Q - off) * K + 150
         canvas = np.zeros((2, int(46 * K + 300), int(64 * K + 300)))
         brush_along(canvas, S, resample(place(v_skeleton())), endstretch=0.45, mirror=True)
-        brush_along(canvas, S, resample(place(two_skeleton())), endstretch=1.0, mirror=True)
+        two = two_skeleton(bowl=a.bowl, bowl_scale=a.bowl_scale, bowl_start=a.bowl_start)
+        brush_along(canvas, S, resample(place(two)), endstretch=1.0, mirror=True)
         ys, xs = np.where((canvas[0] + canvas[1]) > 0.5); m = 30
         box = (xs.min() - m, ys.min() - m, xs.max() - xs.min() + 2 * m, ys.max() - ys.min() + 2 * m)
         sumi, verm = trace(canvas, box, tmp)
